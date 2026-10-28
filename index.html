@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TokoAI - Sell Faster with AI + PayPal</title>
+<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+<style>
+body{font-family:system-ui,Arial,sans-serif;max-width:860px;margin:0 auto;padding:24px;line-height:1.5;background:#f7f7f7;color:#222}
+header{background:#003087;color:#fff;padding:20px;border-radius:12px}
+h1{margin:0 0 6px} .card{background:#fff;padding:20px;border-radius:12px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+label{display:block;margin:10px 0 4px;font-weight:600}
+input,select,textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
+button{background:#ffc439;border:none;padding:12px 18px;border-radius:8px;font-weight:700;cursor:pointer}
+button.secondary{background:#003087;color:#fff}
+#desc{white-space:pre-wrap;background:#f0f4ff;padding:14px;border-radius:8px}
+.small{color:#555;font-size:.9em} #status{font-weight:700}
+</style>
+</head>
+<body>
+<header>
+<h1>TokoAI</h1>
+<p>Sellers enter a product name and keywords, AI turns them into a polished sales description, and buyers check out directly via PayPal Sandbox (test money only, not real money).</p>
+<p class="small">Built for PayPal AI Hackathon 2026 — Maulana Abdan Sakur, solo. This demo uses the PayPal Sandbox demo client-id "sb". For the final submission, replace it with the Sandbox Client ID from your PayPal Developer account.</p>
+</header>
+
+<div class="card">
+<h2>1. Seller: create a product description</h2>
+<label>Product name</label><input id="name" value="Palm Sugar Milk Coffee 1 Litre">
+<label>Keywords / selling points (comma-separated)</label><input id="keys" value="real coffee, real palm sugar, no preservatives, ready to drink">
+<label>Price (USD, demo)</label><input id="price" type="number" min="1" step="0.01" value="5.00">
+<label>Tone</label>
+<select id="tone"><option>Friendly and casual</option><option>Professional</option><option>Cheerful and promotional</option></select>
+<br><br><button class="secondary" onclick="generate()">Generate description with AI</button>
+<h3>Generated description</h3><div id="desc">Click the button above to generate a description.</div>
+<br><button onclick="publish()">Show product to buyers ↓</button>
+</div>
+
+<div class="card" id="shop" style="display:none">
+<h2>2. Buyer: checkout</h2>
+<p><b id="shopName"></b> — <b>$<span id="shopPrice"></span></b></p>
+<p id="shopDesc"></p>
+<div id="paypal-button-container"></div>
+<p id="status"></p>
+<p class="small">This checkout runs in PayPal Sandbox. Use a PayPal Developer Sandbox buyer account to log in at checkout, or cancel to go back. No real money moves in this demo.</p>
+</div>
+
+<script>
+function generate(){
+  const name=document.getElementById('name').value.trim();
+  const keys=document.getElementById('keys').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const price=document.getElementById('price').value;
+  const tone=document.getElementById('tone').value;
+  if(!name){alert('Enter a product name first');return;}
+  // AI-assisted draft generator (prototype): builds a description from the seller's input,
+  // with benefits, selling points, and a call to buy, in the selected tone.
+  // In the final version, this function can be replaced with a language-model (LLM API) call.
+  const keunggulan=keys.length?keys.join(', '):'quality assured';
+  const text = tone + ' — ' + name + '\n\n' +
+    'Why is this product worth buying? Because ' + keunggulan + '.\n' +
+    'This product is made for everyday use, practical, and easy to order from anywhere.\n\n' +
+    'Price: $' + price + '.\n' +
+    'Limited stock, order now before it runs out. Thank you for supporting local businesses!';
+  document.getElementById('desc').textContent=text;
+  return text;
+}
+function publish(){
+  const text=generate();
+  document.getElementById('shop').style.display='block';
+  document.getElementById('shopName').textContent=document.getElementById('name').value;
+  document.getElementById('shopPrice').textContent=document.getElementById('price').value;
+  document.getElementById('shopDesc').textContent=text;
+  document.getElementById('shop').scrollIntoView({behavior:'smooth'});
+  renderPayPal();
+}
+let rendered=false;
+function renderPayPal(){
+  if(rendered) return; rendered=true;
+  paypal.Buttons({
+    createOrder:function(data,actions){
+      return actions.order.create({purchase_units:[{amount:{value:document.getElementById('price').value}}]});
+    },
+    onApprove:function(data,actions){
+      return actions.order.capture().then(function(details){
+        document.getElementById('status').textContent='Sandbox payment successful! Thank you, ' + details.payer.name.given_name + '. Order ID: ' + details.id;
+      });
+    },
+    onError:function(err){document.getElementById('status').textContent='Sandbox checkout cancelled / failed. Please try again.';}
+  }).render('#paypal-button-container');
+}
+</script>
+</body>
+</html>
