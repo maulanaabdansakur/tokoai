@@ -16,12 +16,13 @@ TokoAI is a one-page web app that helps small sellers sell faster:
 cd paypal_hackathon
 python3 -m http.server 8000
 ```
+
 Then open http://localhost:8000/ in a browser.
 
 ## PayPal Sandbox
-- This demo uses the PayPal Sandbox demo client-id `sb`, so the PayPal button renders without a personal Client ID.
+- This demo uses the participant's own PayPal Developer Sandbox Client ID, so the PayPal button renders a full Sandbox checkout.
 - No real money moves. For a full Sandbox checkout, log in with a Sandbox buyer account from PayPal Developer.
-- For the final submission, replace `client-id=sb` in `index.html` with the Sandbox Client ID from the participant's PayPal Developer account.
+- The demo client-id `sb` in `index.html` has been replaced with the participant's own Sandbox Client ID from their PayPal Developer account.
 
 ## AI in this prototype
 The description generator in this prototype is rule/template-based: it builds benefits, selling points, and a call to buy from the seller's inputs, in the selected tone. It runs without an API key so anyone can test the demo.
@@ -31,4 +32,4 @@ For a stronger final version, replace that function with a language-model (LLM) 
 - [ ] Public GitHub repository containing this code (requires the participant's GitHub account)
 - [ ] Demo video under 3 minutes, hosted on YouTube or Vimeo (Devpost asks for a video link)
 - [ ] Create a Project in Devpost, with description, repository link, and video link
-- [ ] Replace the demo client-id with a PayPal Developer Sandbox Client ID for a full Sandbox checkout
+- [x] Replace the demo client-id with a PayPal Developer Sandbox Client ID for a full Sandbox checkout
