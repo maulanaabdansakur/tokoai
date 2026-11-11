@@ -15,7 +15,7 @@ The demo runs on PayPal Sandbox, so no real money moves during testing. The app 
 Buyers check out with the PayPal JavaScript SDK in Sandbox mode. In the final version, the demo client-id is replaced with the participant's PayPal Developer Sandbox Client ID, and checkout is completed with a Sandbox buyer account.
 
 ## How it uses AI
-The prototype's description generator is AI-assisted and template-based, building benefits, selling points, and a call to buy from the seller's inputs. The planned final version replaces this with a language-model API call, keeping the API key on a server.
+The app calls a language model at runtime: when a seller clicks "Generate description with AI", the app sends the product name, keywords, price, and tone to the Pollinations text API (a hosted LLM, keyless — no API key stored in the code) and the model writes the sales description, which is shown on the page and then published to buyers. If the AI service is unreachable, the app falls back to a clearly labelled template draft so the demo still works offline.
 
 ## Built with
 HTML, CSS, JavaScript, PayPal JavaScript SDK (Sandbox)
